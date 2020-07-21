@@ -65,12 +65,12 @@ class VKontakte {
         if (Array.isArray(keywords)) {
             for (let value of keywords) {
                 let tag = this.BC.MT.md5(value)
-                this._keywords[tag] = {tag, value};
+                this._keywords[tag] = {tag, value: value.replace('.', '')};
             }
         } else {
             this._keywords = keywords;
         }
-        console.log(this._keywords);
+        // console.log(this._keywords);
     }
 
     isAvailable () {
@@ -108,7 +108,7 @@ class VKontakte {
             type: chatType,
         };
         bcContext.Message.sender = {
-            id: ctx.signerId ? ctx.signerId : 0,
+            id: ctx.signerId ? ctx.signerId : (parseInt(ctx.authorId) > 0 ? ctx.authorId : null),
             isBot: false,
         };
         bcContext.Message.id = ctx.url.replace('https://vk.com/', '');
@@ -247,9 +247,7 @@ class VKontakte {
             e => console.error('VK STREAMING LAUNCH ERROR', e)
         );
 
-        await this.Streaming.deleteRules().catch(e => console.error(e));
-        await this.Streaming.addRules(Object.values(this._keywords)).catch(e => console.error(e));
-
+        await this.reloadRules(this._keywords);
 
         // switch (this.mode) {
         //     case this.MODES.GROUP:
@@ -291,6 +289,30 @@ class VKontakte {
         // this.Transport.updates.startPolling();
 
         return result;
+    }
+
+    reloadRules = async (rules) => {
+        let existed = await this.Streaming.getRules() || [];
+        rules = this.BC.MT.copyObject(rules);
+        // console.log(existed);
+
+        for (let rule of existed) {
+            if (rule.tag in rules) {
+                delete rules[rule.tag];
+                continue;
+            }
+            // console.debug('RELOAD RULES. DELETE RULE', rule.tag);
+            await this.Streaming.deleteRule(rule.tag).catch(e => console.error('RELOAD RULES. ERROR WHILE DELETE RULE', e));
+        }
+        for (let tag in rules) {
+            if (rules.hasOwnProperty(tag)) {
+                console.debug('RELOAD RULES. ADD RULE', tag);
+                await this.Streaming.addRule(rules[tag]).catch(e => console.error('RELOAD RULES. ERROR WHILE ADD RULE', rules[tag], e));
+            }
+        }
+
+
+        // console.log('RELOAD RULES. KEYWORDS', this._keywords, 'COPIED', rules);
     }
 }
 
