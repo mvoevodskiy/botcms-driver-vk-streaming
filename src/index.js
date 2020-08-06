@@ -114,6 +114,7 @@ class VKontakte {
     bcContext.Message.id = ctx.url.replace('https://vk.com/', '')
     bcContext.Message.date = ctx.actionAt
     bcContext.Message.text = ctx.text || ''
+    bcContext.Message.event = bcContext.Message.EVENTS.CHAT_MESSAGE_NEW
 
     bcContext.Message.keywords = []
     for (let tag of ctx.tags) {
