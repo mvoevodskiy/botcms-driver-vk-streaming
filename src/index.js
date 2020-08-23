@@ -48,7 +48,7 @@ class VKontakte {
     // console.log('TG: ');
     // console.log(params);
     this.Transport = new VK(params)
-    this.Transport.twoFactorHandler = params.twoFactorHandler
+    // this.Transport.twoFactorHandler = params.twoFactorHandler
     this.Streaming = new StreamingAPI(this.Transport)
     // this.Transport.updates.on('message', (new sessionHandler(sessionParams)).middleware);
   }
@@ -292,7 +292,7 @@ class VKontakte {
   }
 
   reloadRules = async (rules) => {
-    let existed = await this.Streaming.getRules() || []
+    let existed = await this.Streaming.getRules().catch(e => console.error(e)) || []
     rules = this.BC.MT.copyObject(rules)
     // console.log(existed);
 
