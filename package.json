@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@vk-io/streaming": "^1.0.0",
-    "botcms": "^1.0.25",
-    "vk-io": "^4.0.1"
+    "botcms": "^1.0.29",
+    "vk-io": "^4.0.2"
   }
 }
