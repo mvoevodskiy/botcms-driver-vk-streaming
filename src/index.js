@@ -105,7 +105,7 @@ class VKontakte {
         chatType = ctx.eventType
     }
     bcContext.Message.chat = {
-      id: ctx.signerId ? ctx.signerId : ctx.authorId,
+      id: ctx.authorId ? ctx.authorId : (ctx.signerId || null),
       type: chatType,
     }
     bcContext.Message.sender = {
