@@ -40,6 +40,7 @@ class VKontakte {
     this.humanName = params.humanName || this.defaults.humanName
     this._keywords = {}
     this.keywords = params.keywords || {}
+    this.restartTimeout = params.restartTimeout || 20 * 60 * 10000
     // console.log(params.keywords);
     // let sessionHandler = params.sessionHandler || this.defaults.sessionHandler;
     // let sessionParams = params.sessionParams || {};
@@ -288,6 +289,13 @@ class VKontakte {
     // this.Transport.updates.start().catch(console.error);
     // this.Transport.updates.startPolling();
 
+    setTimeout(
+      () => {
+        this.Streaming.stop();
+        this.launch()
+      },
+      this.restartTimeout
+    )
     return result
   }
 
